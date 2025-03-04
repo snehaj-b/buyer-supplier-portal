@@ -1,10 +1,11 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 50% 98%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 210 100% 45%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -34,21 +35,14 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 210 33% 99%;
+    --sidebar-foreground: 215 25% 27%;
+    --sidebar-primary: 210 100% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 30% 96%;
+    --sidebar-accent-foreground: 215 25% 27%;
+    --sidebar-border: 216 33% 97%;
+    --sidebar-ring: 215 100% 65%;
   }
 
   .dark {
@@ -61,8 +55,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -79,14 +73,6 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -97,5 +83,79 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .table-cell-highlight {
+    @apply bg-procurement-green text-white font-medium;
+  }
+  
+  .rfq-table {
+    @apply w-full border-collapse;
+  }
+  
+  .rfq-table th, .rfq-table td {
+    @apply border border-gray-200 p-2 text-sm;
+  }
+  
+  .rfq-table th {
+    @apply bg-gray-50 font-medium text-gray-700;
+  }
+  
+  .rfq-table-supplier {
+    @apply bg-yellow-50 text-center font-medium py-1;
+  }
+  
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm border border-gray-100 shadow-sm rounded-lg;
+  }
+  
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-[1.02];
+  }
+  
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md 
+    transition-all duration-300 shadow-sm hover:shadow-md active:scale-[0.98];
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-md 
+    transition-all duration-300 shadow-sm hover:shadow-md active:scale-[0.98];
+  }
+  
+  .btn-action {
+    @apply bg-procurement-green hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md 
+    transition-all duration-300 shadow-sm hover:shadow-md active:scale-[0.98];
+  }
+  
+  .input-field {
+    @apply border border-gray-200 rounded-md p-2 w-full focus:outline-none 
+    focus:ring-2 focus:ring-blue-400 transition-all duration-300;
+  }
+  
+  .section-title {
+    @apply text-lg font-medium text-gray-800 mb-4;
+  }
+  
+  .page-container {
+    @apply p-6 max-w-[1600px] mx-auto animate-fade-in;
+  }
+  
+  .main-content {
+    @apply ml-[260px] transition-all duration-300 p-6;
+  }
+  
+  .main-content-collapsed {
+    @apply ml-[80px] transition-all duration-300 p-6;
+  }
+  
+  .divider {
+    @apply h-px w-full bg-gray-200 my-6;
   }
 }
