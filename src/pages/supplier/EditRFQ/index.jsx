@@ -13,13 +13,14 @@ import { useState } from 'react';
 const EditRFQ = () => {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
+  const [comments, setComments] = useState('');
   
   const [rfqDetails, setRfqDetails] = useState({
     number: 1,
     version: 2,
-    title: 'Office Supplies Procurement',
     bid: 1,
-    dueDate: '23-Jan-25'
+    dueDate: '23-Jan-25',
+    title: 'Office Supplies Procurement'
   });
   
   const [items, setItems] = useState([
@@ -111,10 +112,10 @@ const EditRFQ = () => {
   };
   
   return (
-    <div className="page-container">
+    <div className="page-container bg-yellow-50 min-h-screen">
       <h1 className="text-2xl font-semibold text-gray-800 mb-6">Edit RFQ</h1>
       
-      <Card className="mb-8">
+      <Card className="mb-8 bg-yellow-50 border-gray-300">
         <CardContent className="pt-6">
           <RFQHeader 
             rfqDetails={rfqDetails} 
@@ -134,7 +135,10 @@ const EditRFQ = () => {
             onTermChange={handleTermChange}
           />
           
-          <AdditionalComments />
+          <AdditionalComments 
+            comments={comments}
+            setComments={setComments}
+          />
           
           <ActionButtons
             onSave={handleSave}
