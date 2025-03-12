@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ChevronsLeft, ChevronsRight, ShoppingCart, Users, ClipboardList, FileText, BarChart4, Settings, UserCircle, LogOut, Edit } from 'lucide-react';
+import { ChevronsLeft, ChevronsRight, ShoppingCart, Users, ClipboardList, FileText, BarChart4, Settings, UserCircle, LogOut, FileEdit } from 'lucide-react';
 
 const Sidebar = ({ userRole = 'purchaser' }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -62,14 +61,14 @@ const Sidebar = ({ userRole = 'purchaser' }) => {
       path: '/supplier/rfq-list'
     },
     {
-      title: 'Edit RFQ',
-      icon: <Edit size={20} />,
-      path: '/supplier/edit-rfq'
-    },
-    {
       title: 'My Proposals',
       icon: <FileText size={20} />,
       path: '/supplier/my-proposals'
+    },
+    {
+      title: 'Edit RFQ',
+      icon: <FileEdit size={20} />,
+      path: '/supplier/edit-rfq'
     },
     {
       title: 'Settings',
