@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,7 +19,6 @@ import SupplierDashboard from "./pages/supplier/Dashboard";
 import SupplierRFQList from "./pages/supplier/RFQList";
 import MyProposals from "./pages/supplier/MyProposals";
 import SubmitProposal from "./pages/supplier/SubmitProposal";
-import EditRFQ from "./pages/supplier/EditRFQ";
 
 const queryClient = new QueryClient();
 
@@ -50,7 +48,6 @@ const App = () => (
           <Route path="/supplier/rfq-list" element={<Layout><SupplierRFQList /></Layout>} />
           <Route path="/supplier/my-proposals" element={<Layout><MyProposals /></Layout>} />
           <Route path="/supplier/submit-proposal" element={<Layout><SubmitProposal /></Layout>} />
-          <Route path="/supplier/edit-rfq" element={<Layout><EditRFQ /></Layout>} />
           
           {/* 404 Route */}
           <Route path="*" element={<NotFound />} />
