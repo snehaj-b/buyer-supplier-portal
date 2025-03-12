@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -118,13 +118,6 @@ const Login = () => {
             <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 py-6">
               Sign in
             </Button>
-            
-            <div className="text-center text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
-                Register
-              </Link>
-            </div>
           </form>
         </CardContent>
       </Card>
