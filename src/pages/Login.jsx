@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { UserCircle, Lock } from 'lucide-react';
+import { UserCircle, Lock, LogIn } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Login = () => {
@@ -116,8 +116,17 @@ const Login = () => {
             </div>
             
             <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 py-6">
-              Sign in
+              <LogIn className="mr-2" size={18} /> Sign in
             </Button>
+            
+            <div className="text-center mt-4">
+              <p className="text-sm text-gray-600">
+                Don't have an account?{' '}
+                <Link to="/register" className="text-blue-600 hover:text-blue-800 font-medium">
+                  Register now
+                </Link>
+              </p>
+            </div>
           </form>
         </CardContent>
       </Card>

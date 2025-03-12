@@ -13,6 +13,7 @@ import ComparisonView from "./pages/ComparisonView";
 import CallForBids from "./pages/CallForBids";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 // Supplier pages
 import SupplierDashboard from "./pages/supplier/Dashboard";
@@ -30,8 +31,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Login Route */}
+          {/* Auth Routes */}
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           
           {/* Default route redirect to login */}
           <Route path="/" element={<Navigate to="/login" replace />} />
