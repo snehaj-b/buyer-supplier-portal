@@ -18,6 +18,7 @@ import Login from "./pages/Login";
 // Supplier pages
 import SupplierDashboard from "./pages/supplier/Dashboard";
 import SupplierRFQList from "./pages/supplier/RFQList";
+import EditRFQ from "./pages/supplier/EditRFQ";
 import MyProposals from "./pages/supplier/MyProposals";
 import SubmitProposal from "./pages/supplier/SubmitProposal";
 
@@ -47,6 +48,7 @@ const App = () => (
           {/* Supplier Routes */}
           <Route path="/supplier/dashboard" element={<Layout><SupplierDashboard /></Layout>} />
           <Route path="/supplier/rfq-list" element={<Layout><SupplierRFQList /></Layout>} />
+          <Route path="/supplier/edit-rfq" element={<Layout><EditRFQ /></Layout>} />
           <Route path="/supplier/my-proposals" element={<Layout><MyProposals /></Layout>} />
           <Route path="/supplier/submit-proposal" element={<Layout><SubmitProposal /></Layout>} />
           
