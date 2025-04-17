@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { UserPlus, Mail, Lock, Phone, Building, UserCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { authService } from '@/services/api';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ const Register = () => {
     userRole: 'purchaser'
   });
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -69,7 +71,7 @@ const Register = () => {
     return newErrors;
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     const validationErrors = validateForm();
@@ -78,26 +80,39 @@ const Register = () => {
       return;
     }
     
-    // In a real app, this would call an API to register the user
-    // For now, we'll simulate a successful registration
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('userRole', formData.userRole);
-    localStorage.setItem('userData', JSON.stringify({
-      fullName: formData.fullName,
-      email: formData.email,
-      company: formData.company,
-      phone: formData.phone
-    }));
-    
-    toast({
-      title: "Registration Successful",
-      description: `Welcome ${formData.fullName}! You've registered as a ${formData.userRole === 'supplier' ? 'Supplier' : 'Purchaser'}`,
-    });
-    
-    if (formData.userRole === 'supplier') {
-      navigate('/supplier/dashboard');
-    } else {
-      navigate('/dashboard');
+    try {
+      setLoading(true);
+      const response = await authService.register(formData);
+      
+      // Store token and user data
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('userRole', response.data.data.user.userRole);
+      localStorage.setItem('userData', JSON.stringify({
+        fullName: response.data.data.user.fullName,
+        email: response.data.data.user.email,
+        company: response.data.data.user.company,
+        phone: response.data.data.user.phone
+      }));
+      
+      toast({
+        title: "Registration Successful",
+        description: `Welcome ${formData.fullName}! You've registered as a ${formData.userRole === 'supplier' ? 'Supplier' : 'Purchaser'}`,
+      });
+      
+      if (formData.userRole === 'supplier') {
+        navigate('/supplier/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -233,8 +248,24 @@ const Register = () => {
               </div>
             </div>
             
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 py-6">
-              <UserPlus className="mr-2" size={18} /> Register
+            <Button 
+              type="submit" 
+              className="w-full bg-blue-600 hover:bg-blue-700 py-6"
+              disabled={loading}
+            >
+              {loading ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Registering...
+                </span>
+              ) : (
+                <>
+                  <UserPlus className="mr-2" size={18} /> Register
+                </>
+              )}
             </Button>
             
             <div className="text-center mt-4">
