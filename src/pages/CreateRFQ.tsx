@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,9 +6,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PlusCircle, X, Calendar, Save, SendHorizontal, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const CreateRFQ = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [items, setItems] = useState([
     { id: 1, description: 'Mobile Cover', quantity: 500, price: '', total: '', gst: '', totalWithGst: '' }
   ]);
@@ -82,6 +83,8 @@ const CreateRFQ = () => {
       description: "A call for bid process has been initiated for this RFQ.",
       variant: "default",
     });
+    
+    navigate('/call-for-bids');
   };
 
   return (
