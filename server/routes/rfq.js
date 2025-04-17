@@ -1,7 +1,7 @@
 
-const express = require('express');
-const rfqController = require('../controllers/rfqController');
-const authMiddleware = require('../middleware/auth');
+import express from 'express';
+import * as rfqController from '../controllers/rfqController.js';
+import * as authMiddleware from '../middleware/auth.js';
 const router = express.Router();
 
 // Protect all RFQ routes
@@ -22,4 +22,4 @@ router.post('/:id/bid-round', authMiddleware.restrictTo('purchaser'), rfqControl
 router.get('/available', authMiddleware.restrictTo('supplier'), rfqController.getAvailableRFQs);
 router.get('/:id', rfqController.getRFQById);
 
-module.exports = router;
+export default router;

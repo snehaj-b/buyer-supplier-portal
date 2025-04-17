@@ -1,8 +1,8 @@
 
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
-exports.protect = async (req, res, next) => {
+export const protect = async (req, res, next) => {
   let token;
   
   // Check if token exists in headers
@@ -42,7 +42,7 @@ exports.protect = async (req, res, next) => {
 };
 
 // Check if user is a purchaser
-exports.restrictTo = (...roles) => {
+export const restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.userRole)) {
       return res.status(403).json({

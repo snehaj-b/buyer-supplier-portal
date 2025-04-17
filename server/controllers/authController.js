@@ -1,6 +1,6 @@
 
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
 // Generate JWT token
 const signToken = id => {
@@ -10,7 +10,7 @@ const signToken = id => {
 };
 
 // Register a new user
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { fullName, email, password, confirmPassword, phone, company, userRole } = req.body;
     
@@ -64,7 +64,7 @@ exports.register = async (req, res) => {
 };
 
 // Login user
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     
@@ -109,7 +109,7 @@ exports.login = async (req, res) => {
 };
 
 // Protect route middleware
-exports.protect = async (req, res, next) => {
+export const protect = async (req, res, next) => {
   try {
     let token;
     
@@ -149,7 +149,7 @@ exports.protect = async (req, res, next) => {
 };
 
 // Verify token
-exports.verifyToken = (req, res) => {
+export const verifyToken = (req, res) => {
   // If middleware passed, token is valid
   res.status(200).json({
     status: 'success',
@@ -160,7 +160,7 @@ exports.verifyToken = (req, res) => {
 };
 
 // Forgot password
-exports.forgotPassword = async (req, res) => {
+export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
     

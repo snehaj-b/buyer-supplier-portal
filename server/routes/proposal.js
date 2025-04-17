@@ -1,7 +1,7 @@
 
-const express = require('express');
-const proposalController = require('../controllers/proposalController');
-const authMiddleware = require('../middleware/auth');
+import express from 'express';
+import * as proposalController from '../controllers/proposalController.js';
+import * as authMiddleware from '../middleware/auth.js';
 const router = express.Router();
 
 // Protect all proposal routes
@@ -22,4 +22,4 @@ router.post('/compare', authMiddleware.restrictTo('purchaser'), proposalControll
 // Common routes
 router.get('/:id', proposalController.getProposalById);
 
-module.exports = router;
+export default router;
