@@ -1,12 +1,12 @@
 
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const authRoutes = require('./routes/auth');
-const rfqRoutes = require('./routes/rfq');
-const proposalRoutes = require('./routes/proposal');
-const userRoutes = require('./routes/user');
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import authRoutes from './routes/auth.js';
+import rfqRoutes from './routes/rfq.js';
+import proposalRoutes from './routes/proposal.js';
+import userRoutes from './routes/user.js';
 
 dotenv.config();
 

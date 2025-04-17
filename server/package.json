@@ -3,6 +3,7 @@
   "name": "procureflow-server",
   "version": "1.0.0",
   "description": "Backend server for ProcureFlow procurement system",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
