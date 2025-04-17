@@ -11,7 +11,6 @@ import { authService } from '@/services/api';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userRole, setUserRole] = useState('purchaser');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -64,6 +63,7 @@ const Login = () => {
         navigate('/dashboard');
       }
     } catch (error) {
+      console.error('Login error:', error);
       const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
       toast({
         title: "Error",

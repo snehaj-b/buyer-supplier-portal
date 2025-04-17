@@ -32,6 +32,11 @@ const userSchema = new mongoose.Schema({
     enum: ['purchaser', 'supplier'],
     required: [true, 'User role is required']
   },
+  rfqVersions: {
+    type: Map,
+    of: Number,
+    default: {}
+  },
   createdAt: {
     type: Date,
     default: Date.now

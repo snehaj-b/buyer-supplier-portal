@@ -1,12 +1,30 @@
 
 const RFQ = require('../models/RFQ');
 const User = require('../models/User');
+const Proposal = require('../models/Proposal');
 const sendEmail = require('../utils/email');
 
 // Create a new RFQ
 exports.createRFQ = async (req, res) => {
   try {
-    const { title, description, category, quantity, budget, deadline, documents } = req.body;
+    const { 
+      title, description, category, quantity, budget, deadline, 
+      documents, items, terms, bidRounds 
+    } = req.body;
+    
+    // Generate RFQ number
+    const user = await User.findById(req.user._id);
+    let rfqCount = user.rfqVersions.get('count') || 0;
+    rfqCount++;
+    
+    // Update user's rfq count
+    user.rfqVersions.set('count', rfqCount);
+    await user.save({ validateBeforeSave: false });
+    
+    // Create RFQ number format: ORG-YYYY-COUNT
+    const year = new Date().getFullYear();
+    const orgPrefix = user.company.slice(0, 3).toUpperCase();
+    const rfqNumber = `${orgPrefix}-${year}-${rfqCount.toString().padStart(3, '0')}`;
     
     const newRFQ = await RFQ.create({
       title,
@@ -16,8 +34,14 @@ exports.createRFQ = async (req, res) => {
       budget,
       deadline: new Date(deadline),
       status: 'draft',
+      rfqNumber,
+      version: 1,
       createdBy: req.user._id,
-      documents
+      organization: user.company,
+      documents,
+      items: items || [],
+      terms: terms || [],
+      bidRounds: bidRounds || []
     });
     
     res.status(201).json({
@@ -170,6 +194,54 @@ exports.updateRFQ = async (req, res) => {
   }
 };
 
+// Create new version of an RFQ
+exports.createNewVersion = async (req, res) => {
+  try {
+    const originalRFQ = await RFQ.findById(req.params.id);
+    
+    if (!originalRFQ) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'RFQ not found'
+      });
+    }
+    
+    // Check if the user is the creator of this RFQ
+    if (originalRFQ.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        status: 'fail',
+        message: 'You do not have permission to create a new version of this RFQ'
+      });
+    }
+    
+    // Create a new version
+    const newVersion = originalRFQ.version + 1;
+    
+    // Create new RFQ with incremented version
+    const newRFQ = new RFQ({
+      ...originalRFQ.toObject(),
+      _id: undefined,
+      version: newVersion,
+      status: 'draft',
+      createdAt: Date.now()
+    });
+    
+    await newRFQ.save();
+    
+    res.status(201).json({
+      status: 'success',
+      data: {
+        rfq: newRFQ
+      }
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      message: error.message
+    });
+  }
+};
+
 // Delete an RFQ
 exports.deleteRFQ = async (req, res) => {
   try {
@@ -255,11 +327,11 @@ exports.inviteSuppliers = async (req, res) => {
       try {
         await sendEmail({
           email: supplier.email,
-          subject: `You've been invited to submit a proposal for "${rfq.title}"`,
+          subject: `You've been invited to submit a proposal for "${rfq.title}" (${rfq.rfqNumber} v${rfq.version})`,
           message: `
             Dear ${supplier.fullName},
             
-            You have been invited to submit a proposal for the Request for Quotation (RFQ) titled "${rfq.title}" by ${req.user.company}.
+            You have been invited to submit a proposal for the Request for Quotation (RFQ) titled "${rfq.title}" (${rfq.rfqNumber} v${rfq.version}) by ${req.user.company}.
             
             Please log in to your account to view the details and submit your proposal.
             
@@ -327,11 +399,11 @@ exports.publishRFQ = async (req, res) => {
         try {
           await sendEmail({
             email: supplier.email,
-            subject: `New RFQ Published: "${rfq.title}"`,
+            subject: `New RFQ Published: "${rfq.title}" (${rfq.rfqNumber} v${rfq.version})`,
             message: `
               Dear ${supplier.fullName},
               
-              A new Request for Quotation (RFQ) titled "${rfq.title}" has been published by ${req.user.company}.
+              A new Request for Quotation (RFQ) titled "${rfq.title}" (${rfq.rfqNumber} v${rfq.version}) has been published by ${req.user.company}.
               
               Please log in to your account to view the details and submit your proposal.
               
@@ -389,6 +461,90 @@ exports.closeRFQ = async (req, res) => {
     
     rfq.status = 'closed';
     await rfq.save();
+    
+    res.status(200).json({
+      status: 'success',
+      data: {
+        rfq
+      }
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      message: error.message
+    });
+  }
+};
+
+// Start a bid round
+exports.startBidRound = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+    
+    if (!startDate || !endDate) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Please provide start and end dates for the bid round'
+      });
+    }
+    
+    const rfq = await RFQ.findById(req.params.id);
+    
+    if (!rfq) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'RFQ not found'
+      });
+    }
+    
+    // Check if the user is the creator of this RFQ
+    if (rfq.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        status: 'fail',
+        message: 'You do not have permission to start a bid round for this RFQ'
+      });
+    }
+    
+    // Create a new bid round
+    const newBidRound = {
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      status: 'active'
+    };
+    
+    // Add to RFQ
+    rfq.bidRounds.push(newBidRound);
+    await rfq.save();
+    
+    // Notify suppliers
+    if (rfq.invitedSuppliers.length > 0) {
+      const suppliers = await User.find({
+        _id: { $in: rfq.invitedSuppliers }
+      });
+      
+      for (const supplier of suppliers) {
+        try {
+          await sendEmail({
+            email: supplier.email,
+            subject: `New Bidding Round for "${rfq.title}" (${rfq.rfqNumber} v${rfq.version})`,
+            message: `
+              Dear ${supplier.fullName},
+              
+              A new bidding round has started for RFQ "${rfq.title}" (${rfq.rfqNumber} v${rfq.version}).
+              
+              Bidding period: ${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}
+              
+              Please log in to your account to submit your proposal.
+              
+              Thank you,
+              ProcureFlow Team
+            `
+          });
+        } catch (err) {
+          console.error(`Failed to send email to ${supplier.email}:`, err);
+        }
+      }
+    }
     
     res.status(200).json({
       status: 'success',

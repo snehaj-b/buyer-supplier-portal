@@ -55,6 +55,7 @@ exports.register = async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(400).json({
       status: 'fail',
       message: error.message
@@ -97,6 +98,42 @@ exports.login = async (req, res) => {
       data: {
         user
       }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(400).json({
+      status: 'fail',
+      message: error.message
+    });
+  }
+};
+
+// Forgot password
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Please provide your email'
+      });
+    }
+    
+    const user = await User.findOne({ email });
+    
+    if (!user) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'No user found with that email'
+      });
+    }
+    
+    // TODO: Implement password reset token generation and email sending
+    
+    res.status(200).json({
+      status: 'success',
+      message: 'Password reset instructions sent to your email'
     });
   } catch (error) {
     res.status(400).json({

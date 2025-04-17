@@ -29,6 +29,26 @@ const proposalSchema = new mongoose.Schema({
     enum: ['pending', 'accepted', 'rejected'],
     default: 'pending'
   },
+  version: {
+    type: Number,
+    default: 1
+  },
+  bidRound: {
+    type: Number,
+    default: 1
+  },
+  itemizedQuote: [{
+    itemDescription: String,
+    quantity: Number,
+    unitPrice: Number,
+    total: Number,
+    gst: Number,
+    totalWithGst: Number
+  }],
+  termsAccepted: {
+    type: Boolean,
+    default: false
+  },
   documents: [{
     name: String,
     url: String

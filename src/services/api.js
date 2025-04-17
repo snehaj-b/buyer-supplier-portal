@@ -23,10 +23,27 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Add response interceptor to handle common errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Handle 401 (Unauthorized) errors - token expired or invalid
+    if (error.response && error.response.status === 401) {
+      // Clear auth data and redirect to login
+      localStorage.removeItem('token');
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('userData');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Auth services
 export const authService = {
   register: (userData) => api.post('/auth/register', userData),
   login: (credentials) => api.post('/auth/login', credentials),
+  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
 };
 
 // RFQ services
@@ -40,6 +57,8 @@ export const rfqService = {
   inviteSuppliers: (id, supplierIds) => api.post(`/rfq/${id}/invite`, { supplierIds }),
   publishRFQ: (id) => api.post(`/rfq/${id}/publish`),
   closeRFQ: (id) => api.post(`/rfq/${id}/close`),
+  createNewVersion: (id) => api.post(`/rfq/${id}/version`),
+  startBidRound: (id, bidData) => api.post(`/rfq/${id}/bid-round`, bidData),
 };
 
 // Proposal services
@@ -48,9 +67,11 @@ export const proposalService = {
   getMyProposals: () => api.get('/proposals/my-proposals'),
   getProposalsByRFQ: (rfqId) => api.get(`/proposals/rfq/${rfqId}`),
   getProposalById: (id) => api.get(`/proposals/${id}`),
+  getProposalVersions: (id) => api.get(`/proposals/versions/${id}`),
   updateProposal: (id, proposalData) => api.patch(`/proposals/${id}`, proposalData),
   deleteProposal: (id) => api.delete(`/proposals/${id}`),
   updateProposalStatus: (id, status) => api.patch(`/proposals/${id}/status`, { status }),
+  compareProposals: (proposalIds) => api.post('/proposals/compare', { proposalIds }),
 };
 
 // User services

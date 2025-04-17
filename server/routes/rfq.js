@@ -15,6 +15,8 @@ router.delete('/:id', authMiddleware.restrictTo('purchaser'), rfqController.dele
 router.post('/:id/invite', authMiddleware.restrictTo('purchaser'), rfqController.inviteSuppliers);
 router.post('/:id/publish', authMiddleware.restrictTo('purchaser'), rfqController.publishRFQ);
 router.post('/:id/close', authMiddleware.restrictTo('purchaser'), rfqController.closeRFQ);
+router.post('/:id/version', authMiddleware.restrictTo('purchaser'), rfqController.createNewVersion);
+router.post('/:id/bid-round', authMiddleware.restrictTo('purchaser'), rfqController.startBidRound);
 
 // Routes for suppliers
 router.get('/available', authMiddleware.restrictTo('supplier'), rfqController.getAvailableRFQs);

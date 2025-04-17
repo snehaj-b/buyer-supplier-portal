@@ -31,9 +31,21 @@ const rfqSchema = new mongoose.Schema({
     enum: ['draft', 'published', 'closed', 'awarded'],
     default: 'draft'
   },
+  version: {
+    type: Number,
+    default: 1
+  },
+  rfqNumber: {
+    type: String,
+    required: true
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    required: true
+  },
+  organization: {
+    type: String,
     required: true
   },
   invitedSuppliers: [{
@@ -43,6 +55,26 @@ const rfqSchema = new mongoose.Schema({
   documents: [{
     name: String,
     url: String
+  }],
+  items: [{
+    description: String,
+    quantity: Number,
+    unitPrice: Number,
+    total: Number,
+    gst: Number,
+    totalWithGst: Number
+  }],
+  terms: [{
+    description: String
+  }],
+  bidRounds: [{
+    startDate: Date,
+    endDate: Date,
+    status: {
+      type: String,
+      enum: ['pending', 'active', 'completed'],
+      default: 'pending'
+    }
   }],
   createdAt: {
     type: Date,

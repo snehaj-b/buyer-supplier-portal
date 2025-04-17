@@ -105,6 +105,7 @@ const Register = () => {
         navigate('/dashboard');
       }
     } catch (error) {
+      console.error('Registration error:', error);
       const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
       toast({
         title: "Error",
