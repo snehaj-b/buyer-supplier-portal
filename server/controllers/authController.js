@@ -4,7 +4,7 @@ const User = require('../models/User');
 
 // Generate JWT token
 const signToken = id => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  return jwt.sign({ id }, process.env.JWT_SECRET || 'your-secret-key-for-development', {
     expiresIn: '30d'
   });
 };
@@ -106,6 +106,57 @@ exports.login = async (req, res) => {
       message: error.message
     });
   }
+};
+
+// Protect route middleware
+exports.protect = async (req, res, next) => {
+  try {
+    let token;
+    
+    // Check if token exists in Authorization header
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+    
+    if (!token) {
+      return res.status(401).json({
+        status: 'fail',
+        message: 'You are not logged in. Please log in to get access.'
+      });
+    }
+    
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key-for-development');
+    
+    // Check if user still exists
+    const currentUser = await User.findById(decoded.id);
+    if (!currentUser) {
+      return res.status(401).json({
+        status: 'fail',
+        message: 'The user belonging to this token no longer exists.'
+      });
+    }
+    
+    // Grant access to protected route
+    req.user = currentUser;
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      status: 'fail',
+      message: 'Invalid token. Please log in again.'
+    });
+  }
+};
+
+// Verify token
+exports.verifyToken = (req, res) => {
+  // If middleware passed, token is valid
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: req.user
+    }
+  });
 };
 
 // Forgot password

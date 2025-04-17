@@ -82,7 +82,10 @@ const Register = () => {
     
     try {
       setLoading(true);
+      console.log('Submitting registration data:', formData);
+      
       const response = await authService.register(formData);
+      console.log('Registration successful:', response.data);
       
       // Store token and user data
       localStorage.setItem('token', response.data.token);
@@ -106,7 +109,24 @@ const Register = () => {
       }
     } catch (error) {
       console.error('Registration error:', error);
-      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+      
+      // Provide more detailed error messages
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      if (error.response) {
+        // Server responded with an error
+        errorMessage = error.response.data?.message || errorMessage;
+        console.log('Server error response:', error.response.data);
+      } else if (error.request) {
+        // Request was made but no response
+        errorMessage = 'Cannot connect to the server. Please check your internet connection.';
+        console.log('No response received:', error.request);
+      } else {
+        // Something else happened
+        errorMessage = error.message || errorMessage;
+        console.log('Error during request setup:', error.message);
+      }
+      
       toast({
         title: "Error",
         description: errorMessage,

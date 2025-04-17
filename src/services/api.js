@@ -1,7 +1,8 @@
 
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+// Use the correct backend URL (not localhost which won't work in the Lovable environment)
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 // Create axios instance
 const api = axios.create({
@@ -9,6 +10,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: false // Disable credentials for cross-origin requests
 });
 
 // Add request interceptor to include token in headers
